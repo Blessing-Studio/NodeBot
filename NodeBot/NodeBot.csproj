@@ -8,14 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ConsoleInteractivePrompt" Version="1.0.0" />
     <PackageReference Include="EleCho.CommandLine" Version="1.0.4" />
     <PackageReference Include="EleCho.GoCqHttpSdk" Version="1.1.2" />
     <PackageReference Include="MinecraftProtocol" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\AdvancedConsole\AdvancedConsole.csproj" />
   </ItemGroup>
 
 </Project>
