@@ -8,6 +8,8 @@ namespace NodeBot
         static void Main(string[] args)
         {
             string ip = Console.ReadLine()!;
+            Console.Clear();
+            ConsoleWriter.Init();
             NodeBot nodeBot = new(ip);
             nodeBot.RegisterCommand(new Echo());
             nodeBot.Start();

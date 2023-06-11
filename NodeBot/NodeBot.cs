@@ -1,4 +1,6 @@
 ﻿using EleCho.GoCqHttpSdk;
+using EleCho.GoCqHttpSdk.Message;
+using EleCho.GoCqHttpSdk.Post;
 using NodeBot.Classes;
 using NodeBot.Command;
 using NodeBot.Event;
@@ -36,6 +38,17 @@ namespace NodeBot
             {
                 ExecuteCommand(new ConsoleCommandSender(), e.Text);
             };
+            ReceiveMessageEvent += (sender, e) =>
+            {
+                if(e.Context is CqPrivateMessagePostContext cqPrivateMessage)
+                {
+                    ExecuteCommand(new UserQQSender(session, cqPrivateMessage.UserId), cqPrivateMessage.Message);
+                }
+                if(e.Context is CqGroupMessagePostContext cqGroupMessage)
+                {
+                    ExecuteCommand(new GroupQQSender(session, cqGroupMessage.GroupId, cqGroupMessage.UserId), cqGroupMessage.Message);
+                }
+            };
         }
         public void RegisterCommand(ICommand command)
         {
@@ -57,11 +70,30 @@ namespace NodeBot
             ICommand? command = GetCommandByCommandLine(commandLine);
             if(command == null)
             {
-                throw new Exception();
+                return;
             }
             if(sender is ConsoleCommandSender console)
             {
                 if (command.IsConsoleCommand())
+                {
+                    command.Execute(sender, commandLine);
+                }
+            }
+        }
+        public void ExecuteCommand(IQQSender sender, CqMessage commandLine)
+        {
+            if (commandLine[0] is CqTextMsg cqTextMsg)
+            {
+                ICommand? command = GetCommandByCommandLine(cqTextMsg.Text);
+                if (command == null)
+                {
+                    return;
+                }
+                if(sender is UserQQSender userQQSender && command.IsUserCommand())
+                {
+                    command.Execute(sender, commandLine);
+                }
+                if(sender is GroupQQSender groupQQSender && command.IsGroupCommand())
                 {
                     command.Execute(sender, commandLine);
                 }

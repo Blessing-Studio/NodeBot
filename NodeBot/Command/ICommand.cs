@@ -1,4 +1,5 @@
-﻿using NodeBot.Classes;
+﻿using EleCho.GoCqHttpSdk.Message;
+using NodeBot.Classes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,6 @@ namespace NodeBot.Command
         bool IsGroupCommand();
         int GetDefaultPermission();
         bool Execute(ICommandSender sender, string commandLine);
+        bool Execute(IQQSender QQSender, CqMessage msgs);
     }
 }
