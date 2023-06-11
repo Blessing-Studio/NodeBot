@@ -1,10 +1,22 @@
-﻿namespace NodeBot
+﻿using ConsoleInteractive;
+using NodeBot.Command;
+
+namespace NodeBot
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            string ip = Console.ReadLine()!;
+            NodeBot nodeBot = new(ip);
+            nodeBot.RegisterCommand(new Echo());
+            nodeBot.Start();
+            CancellationTokenSource cts = new CancellationTokenSource();
+            
+            ConsoleReader.MessageReceived += (sender, s) => {
+                nodeBot.CallConsoleInputEvent(s);
+            };
+            ConsoleReader.BeginReadThread(cts.Token);
         }
     }
 }
