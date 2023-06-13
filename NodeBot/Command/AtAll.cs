@@ -19,22 +19,22 @@ namespace NodeBot.Command
         public bool Execute(IQQSender QQSender, CqMessage msgs)
         {
             List<CqAtMsg> tmp = new List<CqAtMsg>();
-            foreach(var user in ((GroupQQSender)QQSender).Session.GetGroupMemberList(QQSender.GetGroupNumber()!.Value)!.Members)
+            foreach(var user in QQSender.GetSession().GetGroupMemberList(QQSender.GetGroupNumber()!.Value)!.Members)
             {
                 tmp.Add(new(user.UserId));
                 if(tmp.Count >= 100)
                 {
-                    ((GroupQQSender)QQSender).Session.SendGroupMessage(QQSender.GetGroupNumber()!.Value, new(tmp));
+                    QQSender.GetSession().SendGroupMessage(QQSender.GetGroupNumber()!.Value, new(tmp));
                     tmp = new();
                 }
             }
-            ((GroupQQSender)QQSender).Session.SendGroupMessage(QQSender.GetGroupNumber()!.Value, new(tmp));
+            QQSender.GetSession().SendGroupMessage(QQSender.GetGroupNumber()!.Value, new(tmp));
             return true;
         }
 
         public int GetDefaultPermission()
         {
-            return 10;
+            return 5;
         }
 
         public string GetName()

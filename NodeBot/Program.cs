@@ -13,6 +13,7 @@ namespace NodeBot
             NodeBot nodeBot = new(ip);
             nodeBot.RegisterCommand(new Echo());
             nodeBot.RegisterCommand(new AtAll());
+            nodeBot.RegisterCommand(new Op());
             nodeBot.Start();
             CancellationTokenSource cts = new CancellationTokenSource();
             

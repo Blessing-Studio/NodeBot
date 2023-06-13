@@ -19,20 +19,32 @@ namespace NodeBot.Classes
         public long GroupNumber;
         public long QQNumber;
         public CqWsSession Session;
-        public GroupQQSender(CqWsSession session, long groupNumber, long QQNumber)
+        public NodeBot Bot;
+        public GroupQQSender(CqWsSession session,NodeBot bot, long groupNumber, long QQNumber)
         {
             this.Session = session;
             this.QQNumber = QQNumber;
             this.GroupNumber = groupNumber;
+            this.Bot = bot;
         }
         public long? GetGroupNumber()
         {
             return GroupNumber;
         }
 
+        public NodeBot GetNodeBot()
+        {
+            return Bot;
+        }
+
         public long GetNumber()
         {
             return QQNumber;
+        }
+
+        public CqWsSession GetSession()
+        {
+            return Session;
         }
 
         public void SendMessage(string message)
@@ -49,10 +61,12 @@ namespace NodeBot.Classes
     {
         public long QQNumber;
         public CqWsSession Session;
-        public UserQQSender(CqWsSession session, long QQNumber)
+        public NodeBot Bot;
+        public UserQQSender(CqWsSession session,NodeBot bot, long QQNumber)
         {
             this.Session = session;
             this.QQNumber = QQNumber;
+            this.Bot = bot;
         }
 
         public long? GetGroupNumber()
@@ -60,9 +74,19 @@ namespace NodeBot.Classes
             return null;
         }
 
+        public NodeBot GetNodeBot()
+        {
+            throw new NotImplementedException();
+        }
+
         public long GetNumber()
         {
             return QQNumber;
+        }
+
+        public CqWsSession GetSession()
+        {
+            return Session;
         }
 
         public void SendMessage(string message)

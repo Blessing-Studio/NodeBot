@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EleCho.GoCqHttpSdk;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,5 +10,7 @@ namespace NodeBot.Classes
     public interface ICommandSender
     {
         void SendMessage(string message);
+        CqWsSession GetSession();
+        NodeBot GetNodeBot();
     }
 }

@@ -7,6 +7,7 @@ using NodeBot.Event;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,6 +15,8 @@ namespace NodeBot
 {
     public class NodeBot
     {
+        public Dictionary<long, int> Permissions = new();
+        public int OpPermission = 5;
         public CqWsSession session;
         public event EventHandler<ConsoleInputEvent>? ConsoleInputEvent;
         public event EventHandler<ReceiveMessageEvent>? ReceiveMessageEvent;
@@ -36,19 +39,35 @@ namespace NodeBot
             });
             ConsoleInputEvent += (sender, e) =>
             {
-                ExecuteCommand(new ConsoleCommandSender(), e.Text);
+                ExecuteCommand(new ConsoleCommandSender(session, this), e.Text);
             };
             ReceiveMessageEvent += (sender, e) =>
             {
                 if(e.Context is CqPrivateMessagePostContext cqPrivateMessage)
                 {
-                    ExecuteCommand(new UserQQSender(session, cqPrivateMessage.UserId), cqPrivateMessage.Message);
+                    ExecuteCommand(new UserQQSender(session, this, cqPrivateMessage.UserId), cqPrivateMessage.Message);
                 }
                 if(e.Context is CqGroupMessagePostContext cqGroupMessage)
                 {
-                    ExecuteCommand(new GroupQQSender(session, cqGroupMessage.GroupId, cqGroupMessage.UserId), cqGroupMessage.Message);
+                    ExecuteCommand(new GroupQQSender(session, this, cqGroupMessage.GroupId, cqGroupMessage.UserId), cqGroupMessage.Message);
                 }
             };
+        }
+        public void SavePermission()
+        {
+            if (!File.Exists("Permission.json"))
+            {
+                File.Create("Permission.json").Close();
+            }
+            File.WriteAllText("Permission.json", Newtonsoft.Json.JsonConvert.SerializeObject(Permissions));
+        }
+        public void LoadPermission()
+        {
+            if (File.Exists("Permission.json"))
+            {
+                string json = File.ReadAllText("Permission.json");
+                Permissions = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<long, int>>(json)!;
+            }
         }
         public void RegisterCommand(ICommand command)
         {
@@ -89,13 +108,20 @@ namespace NodeBot
                 {
                     return;
                 }
-                if(sender is UserQQSender userQQSender && command.IsUserCommand())
+                if (HasPermission(command, sender))
                 {
-                    command.Execute(sender, commandLine);
+                    if (sender is UserQQSender userQQSender && command.IsUserCommand())
+                    {
+                        command.Execute(sender, commandLine);
+                    }
+                    if (sender is GroupQQSender groupQQSender && command.IsGroupCommand())
+                    {
+                        command.Execute(sender, commandLine);
+                    }
                 }
-                if(sender is GroupQQSender groupQQSender && command.IsGroupCommand())
+                else
                 {
-                    command.Execute(sender, commandLine);
+                    sender.SendMessage("你没有权限");
                 }
             }
         }
@@ -121,6 +147,27 @@ namespace NodeBot
                 }
             }
             return null;
+        }
+        public bool HasPermission(ICommand command, long QQNumber)
+        {
+            int permission = 0;
+            if (Permissions.ContainsKey(QQNumber))
+            {
+                permission = Permissions[QQNumber];
+            }
+            return permission >= command.GetDefaultPermission();
+        }
+        public bool HasPermission(ICommand command, ICommandSender sender)
+        {
+            if(sender is IQQSender QQSender)
+            {
+                return HasPermission(command, QQSender.GetNumber());
+            }
+            if(sender is ConsoleCommandSender)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

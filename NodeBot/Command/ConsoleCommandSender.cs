@@ -1,4 +1,5 @@
 ﻿using ConsoleInteractive;
+using EleCho.GoCqHttpSdk;
 using NodeBot.Classes;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,24 @@ namespace NodeBot.Command
 {
     public class ConsoleCommandSender : ICommandSender
     {
+        public CqWsSession Session;
+        public NodeBot Bot;
+        public ConsoleCommandSender(CqWsSession session, NodeBot bot)
+        {
+            Session = session;
+            Bot = bot;
+        }
+
+        public NodeBot GetNodeBot()
+        {
+            return Bot;
+        }
+
+        public CqWsSession GetSession()
+        {
+            return Session;
+        }
+
         public void SendMessage(string message)
         {
             ConsoleWriter.WriteLine(message);
