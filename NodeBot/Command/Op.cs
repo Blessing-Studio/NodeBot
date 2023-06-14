@@ -24,6 +24,7 @@ namespace NodeBot.Command
                 }
                 catch { }
             }
+            sender.GetNodeBot().SavePermission();
             return true;
         }
 
@@ -41,6 +42,7 @@ namespace NodeBot.Command
                 }
                 catch { }
             }
+            QQSender.GetNodeBot().SavePermission();
             return true;
         }
 

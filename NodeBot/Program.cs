@@ -14,6 +14,7 @@ namespace NodeBot
             nodeBot.RegisterCommand(new Echo());
             nodeBot.RegisterCommand(new AtAll());
             nodeBot.RegisterCommand(new Op());
+            nodeBot.LoadPermission();
             nodeBot.Start();
             CancellationTokenSource cts = new CancellationTokenSource();
             
