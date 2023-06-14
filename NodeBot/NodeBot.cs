@@ -4,6 +4,7 @@ using EleCho.GoCqHttpSdk.Post;
 using NodeBot.Classes;
 using NodeBot.Command;
 using NodeBot.Event;
+using NodeBot.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace NodeBot
         public event EventHandler<ConsoleInputEvent>? ConsoleInputEvent;
         public event EventHandler<ReceiveMessageEvent>? ReceiveMessageEvent;
         public List<ICommand> Commands = new List<ICommand>();
+        public List<IService> Services = new List<IService>();
         public NodeBot(string ip)
         {
             session = new(new()
