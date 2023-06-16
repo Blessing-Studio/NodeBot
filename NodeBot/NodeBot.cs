@@ -78,6 +78,10 @@ namespace NodeBot
         public void Start()
         {
             session.Start();
+            foreach(IService service in Services)
+            {
+                service.OnStart();
+            }
         }
         public void CallConsoleInputEvent(string text)
         {
