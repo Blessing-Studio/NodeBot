@@ -11,14 +11,12 @@ namespace NodeBot.github
 {
     public class GithubCommand : ICommand
     {
-        public WebhookService WebhookService { get; set; } = new();
         public GithubCommand()
         {
-            WebhookService.OnStart();
+
         }
         public bool Execute(ICommandSender sender, string commandLine)
         {
-            WebhookService.Create(commandLine.Split(" ")[1]);
             return true;
         }
 
