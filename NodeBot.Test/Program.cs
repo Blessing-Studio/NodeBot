@@ -18,7 +18,8 @@ namespace NodeBot.Test
             nodeBot.RegisterCommand(new AtAll());
             nodeBot.RegisterCommand(new Op());
             nodeBot.RegisterCommand(new github.GithubCommand());
-            WebhookService webhookService = new WebhookService();
+            nodeBot.RegisterCommand(new GitSubscribe());
+            WebhookService webhookService = WebhookService.Instance;
             WebhookService.MessageEvent += (_, e) =>
             {
                 nodeBot.session.SendPrivateMessage(1306334428, new(new CqTextMsg(e.Message)));

@@ -84,7 +84,7 @@ namespace NodeBot
             session.Start();
             foreach(IService service in Services)
             {
-                service.OnStart();
+                service.OnStart(this);
             }
         }
         public void CallConsoleInputEvent(string text)

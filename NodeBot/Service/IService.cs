@@ -8,7 +8,7 @@ namespace NodeBot.Service
 {
     public interface IService
     {
-        void OnStart();
+        void OnStart(NodeBot nodeBot);
         void OnStop();
     }
 }

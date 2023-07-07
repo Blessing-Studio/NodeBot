@@ -1,4 +1,6 @@
 ﻿using ConsoleInteractive;
+using EleCho.GoCqHttpSdk;
+using EleCho.GoCqHttpSdk.Message;
 using NodeBot.github.utils;
 using NodeBot.Service;
 using System;
@@ -24,20 +26,48 @@ namespace NodeBot.github
     {
         public static Thread ListenerThread = new(new ParameterizedThreadStart(Listening));
         public static event EventHandler<WebhookMessageEvent>? MessageEvent;
+        public static WebhookService Instance { get; private set; } = new();
+        public NodeBot? NodeBot { get; private set; }
         static WebhookService()
         {
             MessageEvent += (_, e) =>
             {
-                if(e.MessageType == "PushEvent")
+                if(e.MessageType == "push")
                 {
                     PushEvent pushEvent = Newtonsoft.Json.JsonConvert.DeserializeObject<PushEvent>(e.Message)!;
                     ConsoleWriter.WriteLine(pushEvent.repository.full_name + "有新push");
+                    foreach(GitSubscribeInfo info in GitSubscribe.Info)
+                    {
+                        if(info.Repository == pushEvent.repository.full_name && Instance.NodeBot != null)
+                        {
+                            string msg = $"{pushEvent.repository.full_name}有新推送!";
+                            long added = 0;
+                            long removed = 0;
+                            long modified = 0;
+                            foreach (Commit commit in pushEvent.commits)
+                            {
+                                msg += $"\n - {commit.id.Substring(0, 6)}  {commit.message}";
+                                added += commit.added.LongLength;
+                                removed += commit.removed.LongLength;
+                                modified += commit.modified.LongLength;
+                            }
+                            msg += $"\n推送者  {pushEvent.sender.login}";
+                            msg += $"\n时间  {pushEvent.head_commit.timestamp}";
+                            msg += $"\n链接  {pushEvent.head_commit.url}";
+                            msg += $"\n添加  {added}";
+                            msg += $"\n移除  {removed}";
+                            msg += $"\n修改  {modified}";
+
+                            Instance.NodeBot.session.SendGroupMessage(info.GroupNumber, new(new CqTextMsg(msg)));
+                        }
+                    }
                 }
             };
         }
-        public void OnStart()
+        public void OnStart(NodeBot nodeBot)
         {
             ListenerThread.Start();
+            NodeBot = nodeBot;
         }
 
         public void OnStop()

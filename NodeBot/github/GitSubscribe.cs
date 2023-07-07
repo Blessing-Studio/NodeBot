@@ -1,6 +1,7 @@
 ﻿using EleCho.GoCqHttpSdk.Message;
 using NodeBot.Classes;
 using NodeBot.Command;
+using NodeBot.github.utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,9 @@ using System.Threading.Tasks;
 
 namespace NodeBot.github
 {
-    public class GithubCommand : ICommand
+    public class GitSubscribe : ICommand
     {
-        public GithubCommand()
-        {
-
-        }
+        public static List<GitSubscribeInfo> Info = new List<GitSubscribeInfo>();
         public bool Execute(ICommandSender sender, string commandLine)
         {
             return true;
@@ -22,22 +20,33 @@ namespace NodeBot.github
 
         public bool Execute(IQQSender QQSender, CqMessage msgs)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string msg = ((CqTextMsg)msgs[0]).Text;
+                string repository = msg.Split(' ')[1];
+                Info.Add(new(repository, ((GroupQQSender)QQSender).GroupNumber));
+                QQSender.SendMessage($"成功订阅{repository}");
+            }
+            catch (Exception ex)
+            {
+                QQSender.SendMessage("检查参数");
+            }
+            return true;
         }
 
         public int GetDefaultPermission()
         {
-            return 0;
+            return 5;
         }
 
         public string GetName()
         {
-            return "github";
+            return "GitSubscribe";
         }
 
         public bool IsConsoleCommand()
         {
-            return true;
+            return false;
         }
 
         public bool IsGroupCommand()
