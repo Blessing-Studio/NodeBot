@@ -75,6 +75,10 @@ namespace NodeBot
         {
             Commands.Add(command);
         }
+        public void RegisterService(IService service)
+        {
+            Services.Add(service);
+        }
         public void Start()
         {
             session.Start();
