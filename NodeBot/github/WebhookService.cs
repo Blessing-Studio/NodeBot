@@ -54,9 +54,9 @@ namespace NodeBot.github
                             msg += $"\n推送者  {pushEvent.sender.login}";
                             msg += $"\n时间  {pushEvent.head_commit.timestamp}";
                             msg += $"\n链接  {pushEvent.head_commit.url}";
-                            msg += $"\n添加  {added}";
-                            msg += $"\n移除  {removed}";
-                            msg += $"\n修改  {modified}";
+                            //msg += $"\n添加  {added}";
+                            //msg += $"\n移除  {removed}";
+                            //msg += $"\n修改  {modified}";
 
                             Instance.NodeBot.session.SendGroupMessage(info.GroupNumber, new(new CqTextMsg(msg)));
                         }
