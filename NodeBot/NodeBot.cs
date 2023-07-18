@@ -98,12 +98,15 @@ namespace NodeBot
                 while (true)
                 {
                     Task.Delay(1000);
-                    Task task;
-                    lock (ToDoQueue)
+                    if (ToDoQueue.Count > 0)
                     {
-                        task = ToDoQueue.Dequeue();
+                        Task task;
+                        lock (ToDoQueue)
+                        {
+                            task = ToDoQueue.Dequeue();
+                        }
+                        task.Start();
                     }
-                    task.Start();
                 }
             });
         }
