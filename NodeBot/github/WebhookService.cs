@@ -58,7 +58,7 @@ namespace NodeBot.github
                             //msg += $"\n移除  {removed}";
                             //msg += $"\n修改  {modified}";
 
-                            Instance.NodeBot.session.SendGroupMessage(info.GroupNumber, new(new CqTextMsg(msg)));
+                            Instance.NodeBot.SendGroupMessage(info.GroupNumber, new(new CqTextMsg(msg)));
                         }
                     }
                 }

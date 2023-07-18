@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,18 @@ namespace NodeBot.github
         {
             Repository = repository;
             GroupNumber = groupNumber;
+        }
+        public static bool operator ==(GitSubscribeInfo left, GitSubscribeInfo right)
+        {
+            if(left.GroupNumber == right.GroupNumber && left.Repository == right.Repository)
+            {
+                return true;    
+            }
+            return false;
+        }
+        public static bool operator !=(GitSubscribeInfo left, GitSubscribeInfo right)
+        {
+            return !(left == right);
         }
     }
 }

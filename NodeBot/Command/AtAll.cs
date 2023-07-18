@@ -24,11 +24,11 @@ namespace NodeBot.Command
                 tmp.Add(new(user.UserId));
                 if(tmp.Count >= 100)
                 {
-                    QQSender.GetSession().SendGroupMessage(QQSender.GetGroupNumber()!.Value, new(tmp));
+                    QQSender.GetNodeBot().SendGroupMessage(QQSender.GetGroupNumber()!.Value, new(tmp));
                     tmp = new();
                 }
             }
-            QQSender.GetSession().SendGroupMessage(QQSender.GetGroupNumber()!.Value, new(tmp));
+            QQSender.GetNodeBot().SendGroupMessage(QQSender.GetGroupNumber()!.Value, new(tmp));
             return true;
         }
 

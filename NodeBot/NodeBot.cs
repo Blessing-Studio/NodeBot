@@ -23,6 +23,7 @@ namespace NodeBot
         public event EventHandler<ReceiveMessageEvent>? ReceiveMessageEvent;
         public List<ICommand> Commands = new List<ICommand>();
         public List<IService> Services = new List<IService>();
+        public Queue<Task> ToDoQueue = new Queue<Task>();
         public NodeBot(string ip)
         {
             session = new(new()
@@ -33,7 +34,7 @@ namespace NodeBot
             });
             session.PostPipeline.Use(async (context, next) =>
             {
-                if(ReceiveMessageEvent != null)
+                if (ReceiveMessageEvent != null)
                 {
                     ReceiveMessageEvent(this, new(context));
                 }
@@ -45,16 +46,19 @@ namespace NodeBot
             };
             ReceiveMessageEvent += (sender, e) =>
             {
-                if(e.Context is CqPrivateMessagePostContext cqPrivateMessage)
+                if (e.Context is CqPrivateMessagePostContext cqPrivateMessage)
                 {
                     ExecuteCommand(new UserQQSender(session, this, cqPrivateMessage.UserId), cqPrivateMessage.Message);
                 }
-                if(e.Context is CqGroupMessagePostContext cqGroupMessage)
+                if (e.Context is CqGroupMessagePostContext cqGroupMessage)
                 {
-                    ExecuteCommand(new GroupQQSender(session, this, cqGroupMessage.GroupId, cqGroupMessage.UserId), cqGroupMessage.Message);
+                    ExecuteCommand(new GroupQQSender(session ,this, cqGroupMessage.GroupId, cqGroupMessage.UserId), cqGroupMessage.Message);
                 }
             };
         }
+        /// <summary>
+        /// 保存权限数据
+        /// </summary>
         public void SavePermission()
         {
             if (!File.Exists("Permission.json"))
@@ -63,6 +67,9 @@ namespace NodeBot
             }
             File.WriteAllText("Permission.json", Newtonsoft.Json.JsonConvert.SerializeObject(Permissions));
         }
+        /// <summary>
+        /// 加载权限数据
+        /// </summary>
         public void LoadPermission()
         {
             if (File.Exists("Permission.json"))
@@ -82,14 +89,27 @@ namespace NodeBot
         public void Start()
         {
             session.Start();
-            foreach(IService service in Services)
+            foreach (IService service in Services)
             {
                 service.OnStart(this);
             }
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    Task.Delay(1000);
+                    Task task;
+                    lock (ToDoQueue)
+                    {
+                        task = ToDoQueue.Dequeue();
+                    }
+                    task.Start();
+                }
+            });
         }
         public void CallConsoleInputEvent(string text)
         {
-            if(ConsoleInputEvent != null)
+            if (ConsoleInputEvent != null)
             {
                 ConsoleInputEvent(this, new(text));
             }
@@ -97,11 +117,11 @@ namespace NodeBot
         public void ExecuteCommand(ICommandSender sender, string commandLine)
         {
             ICommand? command = GetCommandByCommandLine(commandLine);
-            if(command == null)
+            if (command == null)
             {
                 return;
             }
-            if(sender is ConsoleCommandSender console)
+            if (sender is ConsoleCommandSender console)
             {
                 if (command.IsConsoleCommand())
                 {
@@ -138,9 +158,9 @@ namespace NodeBot
         public ICommand? GetCommandByCommandLine(string command)
         {
             string[] tmp = command.Split(' ');
-            foreach(string s in tmp)
+            foreach (string s in tmp)
             {
-                if(s != string.Empty)
+                if (s != string.Empty)
                 {
                     return FindCommand(s);
                 }
@@ -149,9 +169,9 @@ namespace NodeBot
         }
         public ICommand? FindCommand(string commandName)
         {
-            foreach(ICommand command in Commands)
+            foreach (ICommand command in Commands)
             {
-                if(command.GetName() == commandName)
+                if (command.GetName() == commandName)
                 {
                     return command;
                 }
@@ -169,15 +189,52 @@ namespace NodeBot
         }
         public bool HasPermission(ICommand command, ICommandSender sender)
         {
-            if(sender is IQQSender QQSender)
+            if (sender is IQQSender QQSender)
             {
                 return HasPermission(command, QQSender.GetNumber());
             }
-            if(sender is ConsoleCommandSender)
+            if (sender is ConsoleCommandSender)
             {
                 return true;
             }
             return false;
+        }
+        public void RunTask(Task task)
+        {
+            lock (ToDoQueue)
+            {
+                ToDoQueue.Enqueue(task);
+            }
+        }
+        public void RunAction(Action action)
+        {
+            Task task = new(action);
+            RunTask(task);
+        }
+        public void SendGroupMessage(long GroupNumber, CqMessage msgs)
+        {
+            RunAction(() =>
+            {
+                session.SendGroupMessage(GroupNumber, msgs);
+            });
+        }
+        public void SendPrivateMessage(long QQNumber, CqMessage msgs)
+        {
+            RunAction(() =>
+            {
+                session.SendPrivateMessage(QQNumber, msgs);
+            });
+        }
+        public void SendMessage(long Number, CqMessage msgs, UserType type)
+        {
+            if(type == UserType.User)
+            {
+                SendPrivateMessage(Number, msgs);
+            }
+            else if(type == UserType.Group)
+            {
+                SendGroupMessage(Number, msgs);
+            }
         }
     }
 }

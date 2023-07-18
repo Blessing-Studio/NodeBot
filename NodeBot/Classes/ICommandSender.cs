@@ -10,7 +10,6 @@ namespace NodeBot.Classes
     public interface ICommandSender
     {
         void SendMessage(string message);
-        CqWsSession GetSession();
         NodeBot GetNodeBot();
     }
 }

@@ -12,6 +12,7 @@ namespace NodeBot.Classes
     {
         long GetNumber();
         long? GetGroupNumber();
+        CqWsSession GetSession();
         void SendMessage(CqMessage msgs);
     }
     public class GroupQQSender : IQQSender
@@ -49,12 +50,12 @@ namespace NodeBot.Classes
 
         public void SendMessage(string message)
         {
-            Session.SendGroupMessage(GroupNumber, new(new CqTextMsg(message)));
+            Bot.SendGroupMessage(GroupNumber, new(new CqTextMsg(message)));
         }
 
         public void SendMessage(CqMessage msgs)
         {
-            Session.SendGroupMessage(GroupNumber, msgs);
+            Bot.SendGroupMessage(GroupNumber, msgs);
         }
     }
     public class UserQQSender : IQQSender
@@ -91,12 +92,12 @@ namespace NodeBot.Classes
 
         public void SendMessage(string message)
         {
-            Session.SendPrivateMessage(QQNumber, new CqMessage(new CqTextMsg(message)));
+            Bot.SendPrivateMessage(QQNumber, new CqMessage(new CqTextMsg(message)));
         }
 
         public void SendMessage(CqMessage msgs)
         {
-            Session.SendPrivateMessage(QQNumber, msgs);
+            Bot.SendPrivateMessage(QQNumber, msgs);
         }
     }
 }
