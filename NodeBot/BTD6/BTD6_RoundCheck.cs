@@ -69,6 +69,15 @@ namespace NodeBot.BTD6
 
         public bool Execute(IQQSender QQSender, CqMessage msgs)
         {
+            if (msgs[0] is CqTextMsg msg)
+            {
+                string commandLine = msg.Text;
+                Execute(QQSender, commandLine);
+            }
+            else
+            {
+                QQSender.SendMessage("参数错误");
+            }
             return true;
         }
 
