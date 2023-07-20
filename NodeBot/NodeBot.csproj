@@ -8,6 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resource\Round-Release.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resource\Round-Release.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ConsoleInteractivePrompt" Version="1.0.0" />
     <PackageReference Include="EleCho.CommandLine" Version="1.0.4" />
     <PackageReference Include="EleCho.GoCqHttpSdk" Version="1.1.2" />

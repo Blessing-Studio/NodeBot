@@ -1,5 +1,6 @@
 ﻿using ConsoleInteractive;
 using EleCho.GoCqHttpSdk;
+using Microsoft.VisualBasic;
 using NodeBot.Classes;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,17 @@ namespace NodeBot.Command
 
         public void SendMessage(string message)
         {
-            ConsoleWriter.WriteLine(message);
+            if (!message.Contains('\n'))
+            {
+                ConsoleWriter.WriteLine(message);
+            }
+            else
+            {
+                foreach (string msg in message.Split('\n'))
+                {
+                    ConsoleWriter.WriteLine(msg);
+                }
+            }
         }
     }
 }

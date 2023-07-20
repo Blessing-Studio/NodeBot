@@ -1,6 +1,7 @@
 ﻿using ConsoleInteractive;
 using EleCho.GoCqHttpSdk;
 using EleCho.GoCqHttpSdk.Message;
+using NodeBot.BTD6;
 using NodeBot.Command;
 using NodeBot.github;
 
@@ -19,6 +20,8 @@ namespace NodeBot.Test
             nodeBot.RegisterCommand(new Op());
             nodeBot.RegisterCommand(new github.GithubCommand());
             nodeBot.RegisterCommand(new Git_Subscribe());
+            nodeBot.RegisterCommand(new Stop());
+            nodeBot.RegisterCommand(new BTD6_RoundCheck());
             WebhookService webhookService = WebhookService.Instance;
             WebhookService.MessageEvent += (_, e) =>
             {
