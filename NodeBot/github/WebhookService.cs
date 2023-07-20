@@ -36,7 +36,7 @@ namespace NodeBot.github
                 {
                     PushEvent pushEvent = Newtonsoft.Json.JsonConvert.DeserializeObject<PushEvent>(e.Message)!;
                     ConsoleWriter.WriteLine(pushEvent.repository.full_name + "有新push");
-                    foreach(GitSubscribeInfo info in GitSubscribe.Info)
+                    foreach(GitSubscribeInfo info in Git_Subscribe.Info)
                     {
                         if(info.Repository == pushEvent.repository.full_name && Instance.NodeBot != null)
                         {

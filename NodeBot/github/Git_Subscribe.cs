@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace NodeBot.github
 {
-    public class GitSubscribe : ICommand
+    public class Git_Subscribe : ICommand
     {
         public static List<GitSubscribeInfo> Info = new List<GitSubscribeInfo>();
-        public GitSubscribe()
+        public Git_Subscribe()
         {
             LoadInfo();
         }
@@ -55,7 +55,7 @@ namespace NodeBot.github
 
         public string GetName()
         {
-            return "GitSubscribe";
+            return "github::subscribe";
         }
 
         public bool IsConsoleCommand()
