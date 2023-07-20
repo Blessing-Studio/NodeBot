@@ -174,7 +174,7 @@ namespace NodeBot
         {
             foreach (ICommand command in Commands)
             {
-                if (command.GetName() == commandName)
+                if (command.GetName().ToLower() == commandName.ToLower())
                 {
                     return command;
                 }
