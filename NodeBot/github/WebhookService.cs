@@ -35,30 +35,33 @@ namespace NodeBot.github
                 if(e.MessageType == "push")
                 {
                     PushEvent pushEvent = Newtonsoft.Json.JsonConvert.DeserializeObject<PushEvent>(e.Message)!;
-                    ConsoleWriter.WriteLine(pushEvent.repository.full_name + "有新push");
-                    foreach(GitSubscribeInfo info in Git_Subscribe.Info)
+                    if (pushEvent.sender.login != "github-actions[bot]")
                     {
-                        if(info.Repository == pushEvent.repository.full_name && Instance.NodeBot != null)
+                        ConsoleWriter.WriteLine(pushEvent.repository.full_name + "有新push");
+                        foreach (GitSubscribeInfo info in Git_Subscribe.Info)
                         {
-                            string msg = $"{pushEvent.repository.full_name}有新推送!";
-                            long added = 0;
-                            long removed = 0;
-                            long modified = 0;
-                            foreach (Commit commit in pushEvent.commits)
+                            if (info.Repository == pushEvent.repository.full_name && Instance.NodeBot != null)
                             {
-                                msg += $"\n - {commit.id.Substring(0, 6)}  {commit.message}";
-                                added += commit.added.LongLength;
-                                removed += commit.removed.LongLength;
-                                modified += commit.modified.LongLength;
-                            }
-                            msg += $"\n推送者  {pushEvent.sender.login}";
-                            msg += $"\n时间  {pushEvent.head_commit.timestamp}";
-                            msg += $"\n链接  {pushEvent.head_commit.url}";
-                            //msg += $"\n添加  {added}";
-                            //msg += $"\n移除  {removed}";
-                            //msg += $"\n修改  {modified}";
+                                string msg = $"{pushEvent.repository.full_name}有新推送!";
+                                long added = 0;
+                                long removed = 0;
+                                long modified = 0;
+                                foreach (Commit commit in pushEvent.commits)
+                                {
+                                    msg += $"\n - {commit.id.Substring(0, 6)}  {commit.message}";
+                                    added += commit.added.LongLength;
+                                    removed += commit.removed.LongLength;
+                                    modified += commit.modified.LongLength;
+                                }
+                                msg += $"\n推送者  {pushEvent.sender.login}";
+                                msg += $"\n时间  {pushEvent.head_commit.timestamp}";
+                                msg += $"\n链接  {pushEvent.head_commit.url}";
+                                //msg += $"\n添加  {added}";
+                                //msg += $"\n移除  {removed}";
+                                //msg += $"\n修改  {modified}";
 
-                            Instance.NodeBot.SendGroupMessage(info.GroupNumber, new(new CqTextMsg(msg)));
+                                Instance.NodeBot.SendGroupMessage(info.GroupNumber, new(new CqTextMsg(msg)));
+                            }
                         }
                     }
                 }
