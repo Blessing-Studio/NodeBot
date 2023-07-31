@@ -29,5 +29,26 @@ namespace NodeBot.github
         {
             return !(left == right);
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (obj != null)
+            {
+                if (this.GetType() == obj.GetType())
+                {
+                    return this == (GitSubscribeInfo)obj;
+                }
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Repository.GetHashCode() ^ GroupNumber.GetHashCode();
+        }
     }
 }
