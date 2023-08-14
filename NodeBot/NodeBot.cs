@@ -97,7 +97,7 @@ namespace NodeBot
             {
                 while (true)
                 {
-                    Task.Delay(1000);
+                    Thread.Sleep(1000);
                     if (ToDoQueue.Count > 0)
                     {
                         Task task;
